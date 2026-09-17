@@ -46,9 +46,7 @@
       text-align: center;
       letter-spacing: 0.05em;
     }
-    input[type="password"]:focus {
-      border-color: #444;
-    }
+    input[type="password"]:focus { border-color: #444; }
     button {
       width: 100%;
       padding: 0.7rem 1rem;
@@ -60,10 +58,7 @@
       letter-spacing: 0.08em;
       text-transform: uppercase;
     }
-    button:hover {
-      border-color: #555;
-      color: #ddd;
-    }
+    button:hover { border-color: #555; color: #ddd; }
     .gate.fail {
       animation: shake 0.4s ease, fade 0.5s ease;
     }
@@ -92,15 +87,15 @@
       var cfg = window.SITE_CONFIG || {};
       var form = document.getElementById("gate");
       var input = document.getElementById("password");
+      var nextPage = cfg.unlockPage || "levelone.html";
 
       form.addEventListener("submit", function (e) {
         e.preventDefault();
-        var value = input.value;
-        if (value === cfg.password) {
+        if (input.value === cfg.password) {
           try {
             sessionStorage.setItem(cfg.unlockKey || "hoppou_unlocked", "1");
           } catch (err) {}
-          window.location.href = "video.html";
+          window.location.href = nextPage;
           return;
         }
         form.classList.remove("fail");

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>hoppoulegionfiles.org</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      min-height: 100%;
+      background: #000;
+      color: #e34c3e;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    body { background: #000; }
+    .message {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .message p {
+      color: var(--message-color, #e34c3e);
+      font-size: clamp(1rem, 2.2vw, 1.5rem);
+      font-weight: 400;
+      line-height: 1.5;
+    }
+    .void {
+      width: 100%;
+      background: #000;
+    }
+    .footer {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      text-align: center;
+    }
+    .footer p {
+      color: var(--message-color, #e34c3e);
+      font-size: 0.7rem;
+      font-weight: 400;
+      line-height: 1.4;
+      letter-spacing: 0.02em;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="message" aria-label="Message">
+      <p id="message"></p>
+    </section>
+    <div class="void" id="void" aria-hidden="true"></div>
+    <section class="footer" aria-label="Footer">
+      <p id="footer"></p>
+    </section>
+  </main>
+  <script src="config.js"></script>
+  <script>
+    (function () {
+      var cfg = window.SITE_CONFIG || {};
+      var key = cfg.unlockKey || "hoppou_unlocked";
+      var unlocked = false;
+      try {
+        unlocked = sessionStorage.getItem(key) === "1";
+      } catch (err) {}
+      if (!unlocked) {
+        window.location.replace("index.html");
+        return;
+      }
+
+      var color = cfg.messageColor || "#e34c3e";
+      var message = document.getElementById("message");
+      message.textContent = cfg.message || "";
+      message.style.setProperty("--message-color", color);
+
+      var screens = Number(cfg.scrollScreens);
+      if (!screens || screens < 1) screens = 20;
+      document.getElementById("void").style.height = (screens * 100) + "vh";
+
+      var footer = document.getElementById("footer");
+      footer.textContent = cfg.footerMessage || "Look up and search the night sky";
+      footer.style.setProperty("--message-color", color);
+    })();
+  </script>
+</body>
+</html>
