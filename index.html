@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>hoppoulegionfiles.org</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body {
+      height: 100%;
+      background: #000;
+      color: #ccc;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+    .gate {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 1rem;
+      width: min(280px, 90vw);
+    }
+    input[type="password"] {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: #0a0a0a;
+      border: 1px solid #222;
+      color: #eee;
+      font-size: 1rem;
+      outline: none;
+      text-align: center;
+      letter-spacing: 0.05em;
+    }
+    input[type="password"]:focus {
+      border-color: #444;
+    }
+    button {
+      width: 100%;
+      padding: 0.7rem 1rem;
+      background: #111;
+      border: 1px solid #333;
+      color: #aaa;
+      font-size: 0.95rem;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+    button:hover {
+      border-color: #555;
+      color: #ddd;
+    }
+    .gate.fail {
+      animation: shake 0.4s ease, fade 0.5s ease;
+    }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-6px); }
+      80% { transform: translateX(6px); }
+    }
+    @keyframes fade {
+      0% { opacity: 1; }
+      40% { opacity: 0.35; }
+      100% { opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+  <form class="gate" id="gate" autocomplete="off">
+    <input type="password" id="password" name="password" placeholder="" aria-label="Password" autofocus />
+    <button type="submit">Enter</button>
+  </form>
+  <script src="config.js"></script>
+  <script>
+    (function () {
+      var cfg = window.SITE_CONFIG || {};
+      var form = document.getElementById("gate");
+      var input = document.getElementById("password");
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var value = input.value;
+        if (value === cfg.password) {
+          try {
+            sessionStorage.setItem(cfg.unlockKey || "hoppou_unlocked", "1");
+          } catch (err) {}
+          window.location.href = "video.html";
+          return;
+        }
+        form.classList.remove("fail");
+        void form.offsetWidth;
+        form.classList.add("fail");
+        input.value = "";
+        input.focus();
+      });
+    })();
+  </script>
+</body>
+</html>
