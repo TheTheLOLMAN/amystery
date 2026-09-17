@@ -12,7 +12,7 @@
   <meta property="og:site_name" content="hoppoulegionfiles.org" />
   <meta name="theme-color" content="#000000" />
   <meta name="twitter:card" content="summary" />
-  <meta name="twitter:title" content="how deep do you want to go?" />
+  <meta name="twitter:title" content="this is it. you found it." />
   <meta name="twitter:description" content="how deep do you want to go?" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -88,16 +88,19 @@
       var input = document.getElementById("password");
       var nextPage = cfg.unlockPage || "levelone.html";
 
+      function bytesToHex(bytes) {
+        var out = "";
+        for (var i = 0; i < bytes.length; i++) {
+          var h = bytes[i].toString(16);
+          out += h.length === 1 ? "0" + h : h;
+        }
+        return out;
+      }
+
       function sha256Hex(text) {
         var data = new TextEncoder().encode(text);
         return crypto.subtle.digest("SHA-256", data).then(function (buf) {
-          var bytes = new Uint8Array(buf);
-          var out = "";
-          for (var i = 0; i < bytes.length; i++) {
-            var h = bytes[i].toString(16);
-            out += h.length === 1 ? "0" + h : h;
-          }
-          return out;
+          return bytesToHex(new Uint8Array(buf));
         });
       }
 
@@ -111,9 +114,13 @@
 
       form.addEventListener("submit", function (e) {
         e.preventDefault();
-        var value = input.value;
+        var value = String(input.value || "").trim().toLowerCase();
+        if (!cfg.passwordHash || !window.crypto || !crypto.subtle) {
+          fail();
+          return;
+        }
         sha256Hex(value).then(function (hash) {
-          if (hash === cfg.passwordHash) {
+          if (hash === String(cfg.passwordHash).toLowerCase()) {
             try {
               sessionStorage.setItem(cfg.unlockKey || "hoppou_unlocked", "1");
             } catch (err) {}
