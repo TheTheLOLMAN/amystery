@@ -1,6 +1,6 @@
-// Easy to change — password is case-sensitive
+// Easy to change
 window.SITE_CONFIG = {
-  password: "northernstar",
+  passwordHash: "e95b7dcd119503218d873de6c6fb7c8f9ac545452876ec2a63dba5b9a75f1a2a",
   unlockKey: "hoppou_unlocked",
   unlockPage: "levelone.html",
   message: "congratulations, you are now heading into something deeper.",
