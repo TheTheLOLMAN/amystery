@@ -33,7 +33,7 @@
       flex-direction: column;
       align-items: center;
       gap: 1rem;
-      width: min(280px, 90vw);
+      width: min(320px, 90vw);
     }
     input[type="password"] {
       width: 100%;
@@ -56,8 +56,7 @@
       font-size: 0.95rem;
       cursor: pointer;
       letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
+          }
     button:hover { border-color: #555; color: #ddd; }
     .gate.fail {
       animation: shake 0.4s ease, fade 0.5s ease;
@@ -79,7 +78,7 @@
 <body>
   <form class="gate" id="gate" autocomplete="off">
     <input type="password" id="password" name="password" placeholder="" aria-label="Password" autofocus />
-    <button type="submit">Enter</button>
+    <button type="submit">go on, take a shot</button>
   </form>
   <script src="config.js"></script>
   <script>
@@ -89,20 +88,42 @@
       var input = document.getElementById("password");
       var nextPage = cfg.unlockPage || "levelone.html";
 
-      form.addEventListener("submit", function (e) {
-        e.preventDefault();
-        if (input.value === cfg.password) {
-          try {
-            sessionStorage.setItem(cfg.unlockKey || "hoppou_unlocked", "1");
-          } catch (err) {}
-          window.location.href = nextPage;
-          return;
-        }
+      function sha256Hex(text) {
+        var data = new TextEncoder().encode(text);
+        return crypto.subtle.digest("SHA-256", data).then(function (buf) {
+          var bytes = new Uint8Array(buf);
+          var out = "";
+          for (var i = 0; i < bytes.length; i++) {
+            var h = bytes[i].toString(16);
+            out += h.length === 1 ? "0" + h : h;
+          }
+          return out;
+        });
+      }
+
+      function fail() {
         form.classList.remove("fail");
         void form.offsetWidth;
         form.classList.add("fail");
         input.value = "";
         input.focus();
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        var value = input.value;
+        sha256Hex(value).then(function (hash) {
+          if (hash === cfg.passwordHash) {
+            try {
+              sessionStorage.setItem(cfg.unlockKey || "hoppou_unlocked", "1");
+            } catch (err) {}
+            window.location.href = nextPage;
+            return;
+          }
+          fail();
+        }).catch(function () {
+          fail();
+        });
       });
     })();
   </script>
